@@ -41,3 +41,19 @@ LOAD DATA LOCAL INPATH 'tbl1.csv' INTO TABLE tbl1;
 --
 
 
+DROP TABLE IF EXISTS tabla1;
+DROP TABLE IF EXISTS tabla2;
+
+CREATE TABLE tabla1 AS
+SELECT c2 AS letra, collect_set(cast(c1 as string)) AS numero
+FROM tbl0
+GROUP BY c2
+ORDER BY c2;
+    
+CREATE TABLE tabla2 AS
+SELECT letra, concat_ws(':',numero)
+FROM tabla1;
+
+INSERT OVERWRITE LOCAL DIRECTORY 'output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT * FROM tabla2;

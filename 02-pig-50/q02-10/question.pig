@@ -10,3 +10,15 @@ fs -rm -f -r output;
 -- 
 
 
+fs -put data.tsv;
+
+lines = LOAD 'data.tsv' AS (letra:CHARARRAY, fecha:CHARARRAY, numero:INT);
+
+ordenar = ORDER lines BY letra ASC, numero ASC;
+DUMP ordenar;
+
+STORE ordenar INTO 'output';
+
+fs -get output/ .;
+
+fs -rm data.tsv;

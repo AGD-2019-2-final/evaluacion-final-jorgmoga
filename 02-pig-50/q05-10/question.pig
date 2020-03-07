@@ -12,3 +12,16 @@ fs -rm -f -r output;
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
 
+lines = LOAD 'data.tsv' USING PigStorage('\t') AS (
+letra:CHARARRAY,
+conjunto_tuplas:BAG{t: TUPLE(p:CHARARRAY)},
+parejas:MAP[]);
+
+letra = FOREACH lines GENERATE FLATTEN(conjunto_tuplas);
+
+conteo = GROUP letra BY $0;
+
+conteo1 = FOREACH conteo GENERATE group, COUNT($1);
+
+STORE conteo1 INTO 'output';
+fs -get output/ .;

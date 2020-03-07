@@ -40,4 +40,15 @@ LOAD DATA LOCAL INPATH 'tbl1.csv' INTO TABLE tbl1;
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
 
+DROP TABLE IF EXISTS tabla1;
+DROP TABLE IF EXISTS tabla2;
 
+CREATE TABLE tabla1 AS
+SELECT concat_ws(':',c5) AS letra FROM tbl0;
+    
+CREATE TABLE tabla2 AS
+SELECT upper(letra) as letra_mayuscula FROM tabla1;
+
+INSERT OVERWRITE LOCAL DIRECTORY 'output'
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+SELECT * FROM tabla2;

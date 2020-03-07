@@ -28,4 +28,21 @@
 fs -rm -f -r output;
 --
 
+fs -put data.csv;
+
+lines = LOAD 'data.csv' USING PigStorage(',') AS (
+ID:INT,
+nombre:CHARARRAY,
+apellido:CHARARRAY,
+fecha:CHARARRAY,
+color:CHARARRAY,
+numero:INT);
+
+concatenar = FOREACH lines GENERATE CONCAT(nombre,'@', apellido);
+
+STORE concatenar INTO 'output';
+
+fs -get output/ .;
+
+fs -rm data.csv;
 

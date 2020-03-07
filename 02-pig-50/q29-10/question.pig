@@ -29,7 +29,10 @@
 -- Escriba el resultado a la carpeta `output` del directorio actual.
 -- 
 fs -rm -f -r output;
--- 
+--
+
+fs -put data.csv;
+
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
         firstname:CHARARRAY, 
@@ -40,3 +43,15 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+
+tabla_fecha = FOREACH u GENERATE 
+ToString(ToDate(birthday, 'YYYY-mm-DD'),'YYYY-mm-DD'),
+CASE ToString(ToDate(birthday,'YYYY-mm-DD'), 'mm') WHEN '01' THEN 'ene' WHEN '02' THEN 'feb' WHEN '03' THEN 'mar' WHEN '04' THEN 'abr' WHEN '05' THEN 'may' WHEN '06' THEN 'jun' WHEN '07' THEN 'jul' WHEN '08' THEN 'ago' WHEN '09' THEN 'sep' WHEN '10' THEN 'oct' WHEN '11' THEN 'nov' WHEN '12' THEN 'dic' END, 
+ToString(ToDate(birthday, 'YYYY-mm-DD'),'mm'),
+ToString(ToDate(birthday, 'YYYY-mm-DD'),'m');
+
+STORE tabla_fecha INTO 'output' USING PigStorage(',');
+
+fs -get output/ .;
+
+fs -rm data.csv;

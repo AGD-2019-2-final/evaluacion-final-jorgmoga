@@ -12,3 +12,20 @@ fs -rm -f -r output;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+
+fs -put data.tsv;
+
+lines = LOAD 'data.tsv' USING PigStorage('\t') AS (
+letra:CHARARRAY,
+conjunto_tuplas:BAG{t: TUPLE(p:CHARARRAY)},
+parejas:MAP[]);
+DUMP lines;
+
+conteo = FOREACH lines GENERATE letra, SIZE(conjunto_tuplas) as cantidad_conjuntos, SIZE(parejas) as cantidad_parejas;
+
+conteo1 = ORDER conteo BY letra, cantidad_conjuntos, cantidad_parejas;
+
+STORE conteo1 INTO 'output' USING PigStorage(',');
+fs -get output/ .;
+
+fs -rm data.tsv;

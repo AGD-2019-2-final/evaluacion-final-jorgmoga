@@ -19,6 +19,9 @@
 -- 
 fs -rm -f -r output;
 --
+
+fs -put data.csv;
+
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
         firstname:CHARARRAY, 
@@ -30,3 +33,12 @@ u = LOAD 'data.csv' USING PigStorage(',')
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
 
+tabla = FOREACH u GENERATE REGEX_EXTRACT(birthday, '(\\d{4})-(\\d{2})-(\\d{2})', 1) as yyyy;
+
+tabla1 = FOREACH tabla GENERATE yyyy, SUBSTRING(yyyy, 2, 4) as yy;
+
+STORE tabla1 INTO 'output' USING PigStorage(',');
+
+fs -get output/ .;
+
+fs -rm data.csv;

@@ -16,7 +16,10 @@
 -- Escriba el resultado a la carpeta `output` del directorio actual.
 -- 
 fs -rm -f -r output;
--- 
+--
+
+fs -put data.csv;
+
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
         firstname:CHARARRAY, 
@@ -27,3 +30,13 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+
+tabla = FOREACH u GENERATE firstname, color;
+
+filtro = FILTER tabla BY firstname matches '.*Z.*' AND color == 'blue';
+
+STORE filtro INTO 'output';
+
+fs -get output/ .;
+
+fs -rm data.csv;

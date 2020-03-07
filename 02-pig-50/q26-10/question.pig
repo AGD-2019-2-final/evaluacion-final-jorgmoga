@@ -17,6 +17,9 @@
 -- 
 fs -rm -f -r output;
 --
+
+fs -put data.csv;
+
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
         firstname:CHARARRAY, 
@@ -27,3 +30,15 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+
+tabla = FOREACH u GENERATE firstname, SUBSTRING(firstname, 0, 1) as letra;
+
+filtro= FILTER tabla BY letra >= 'M';
+
+tabla1 = FOREACH filtro GENERATE firstname;
+
+STORE tabla1 INTO 'output';
+
+fs -get output/ .;
+
+fs -rm data.csv;

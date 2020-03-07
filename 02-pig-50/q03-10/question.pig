@@ -8,3 +8,19 @@ fs -rm -f -r output;
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+
+fs -put data.tsv;
+
+lines = LOAD 'data.tsv' AS (letra:CHARARRAY, fecha:CHARARRAY, numero:INT);
+
+numeros = FOREACH lines GENERATE numero;
+
+ordenar = ORDER numeros BY numero ASC;
+consulta_5 = LIMIT ordenar 5;
+DUMP consulta_5;
+
+STORE consulta_5 INTO 'output';
+
+fs -get output/ .;
+
+fs -rm data.tsv;

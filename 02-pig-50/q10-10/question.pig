@@ -16,6 +16,9 @@
 -- 
 fs -rm -f -r output;
 --
+
+fs -put data.csv;
+
 u = LOAD 'data.csv' USING PigStorage(',') 
     AS (id:int, 
         firstname:CHARARRAY, 
@@ -26,3 +29,16 @@ u = LOAD 'data.csv' USING PigStorage(',')
 --
 -- >>> Escriba su respuesta a partir de este punto <<<
 --
+
+tabla = FOREACH u GENERATE surname as surname,SIZE(surname) as largo_surname;
+
+tabla1 = ORDER tabla BY largo_surname DESC, surname;
+tabla2 = LIMIT tabla1 5;
+
+STORE tabla2 INTO 'output' USING PigStorage(',');
+
+fs -get output/ .;
+
+fs -rm data.csv;
+
+
